@@ -95,4 +95,4 @@ if (!isDevelopment && config.plugins) {
     // config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
 }
 
-export default config
+export default config;
