@@ -49,7 +49,7 @@ const config: webpack.Configuration = {
           ],
           env: {
             development: {
-              plugins: [['@emotion', { sourceMap: true }], require.resolve('react-refresh/babel')],
+              plugins: [['@emotion/babel-plugin', { sourceMap: true }], require.resolve('react-refresh/babel')],
             },
             production: {
               plugins: ['@emotion'],
@@ -79,7 +79,7 @@ const config: webpack.Configuration = {
     publicPath: '/dist/',
   },
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: true, // router 적용
     port: 3090,
     devMiddleware: { publicPath: '/dist/' },
     static: { directory: path.resolve(__dirname) },

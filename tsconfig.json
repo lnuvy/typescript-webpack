@@ -18,6 +18,5 @@
       "@utils/*": ["utils/*"],
       "@typings/*": ["typings/*"],
     }
-
   }
 }
