@@ -1,10 +1,16 @@
 import React from "react";
-import { Routes } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Login from '@pages/login'
 import SignUp from '@pages/signUp'
 
 const App = ()=> {
-    return <div> 6버전 덤벼</div>
+    return (
+      <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    )
 }
 
 export default App;
