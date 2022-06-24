@@ -2,6 +2,7 @@ import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from 're
 
 type ReturnTypes<T = any> = [T, (e: ChangeEvent<HTMLInputElement>) => void];
 
+// initialData 가 계속 덮어씌워져서 디펜던시 어레이에 밸류를 넣어야함
 const useInputs = <T = any>(initialData: T): ReturnTypes => {
   const [values, setValues] = useState(initialData);
 
