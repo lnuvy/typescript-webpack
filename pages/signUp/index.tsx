@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Form, Header, Input, Label, LinkContainer, Error, Success } from '@pages/signUp/styles';
 import useInputs from '@hooks/useInputs';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const SignUp = () => {
   const [inputs, onChangeHook] = useInputs({});
@@ -51,7 +52,7 @@ const SignUp = () => {
           .catch((err: any) => {
             console.log(err.response);
             setSignUpError(err.response.data);
-          })
+          });
       }
     },
     [inputs, password, passwordCheck, mismatchError],
@@ -98,7 +99,7 @@ const SignUp = () => {
       </Form>
       <LinkContainer>
         이미 회원이신가요?&nbsp;
-        {/*<Link to="/login">로그인 하러가기</Link>*/}
+        <Link to='/login'>로그인 하러가기</Link>
       </LinkContainer>
     </div>
   );
