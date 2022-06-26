@@ -9,8 +9,6 @@ const useInputs = <T = any>(initialData: T): ReturnTypes => {
   const handler = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      console.log(name, value);
-      console.log(values);
       setValues({ ...values, [name]: value });
     },
     [values],
