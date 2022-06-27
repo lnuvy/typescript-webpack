@@ -2,12 +2,24 @@ import useInput from '@hooks/useInput';
 import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/signUp/styles';
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
-import useSWR from 'swr'
-import fetcher from "@utils/fetcher";
+import { Link, useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
+import { useQuery, useQueryClient } from 'react-query';
+import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-  const {data, error} = useSWR('http://localhost:3095/api/users', fetcher);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { data, error, isLoading } = useQuery('userInfo', () => {
+    axios.get('http://localhost:3095/api/users').then(({ data }) => {
+      console.log(data);
+    });
+  });
+
+  if (data) {
+    navigate('/workspace/channel');
+  }
+
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -23,12 +35,10 @@ const LogIn = () => {
             withCredentials: true,
           },
         )
-        .then((response) => {
-          // revalidate();
-        })
+        .then((response) => {})
         .catch((error) => {
-          console.log(error.response)
-          console.log(error.response.data.statusCode)
+          console.log(error.response);
+          console.log(error.response.data.statusCode);
           setLogInError(error.response.status === 401);
         });
     },
