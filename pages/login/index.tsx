@@ -3,30 +3,27 @@ import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } fro
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useSWR from 'swr';
 import { useQuery, useQueryClient } from 'react-query';
+import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data, error, isLoading } = useQuery('userInfo', () => {
     axios.get('http://localhost:3095/api/users').then(({ data }) => {
       console.log(data);
+      return data;
     });
   });
 
-  if (data) {
-    navigate('/workspace/channel');
-  }
-
-  const [logInError, setLogInError] = useState(false);
+  const [logInError, setLogInError] = useState(null);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const onSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      setLogInError(false);
+      setLogInError(null);
       axios
         .post(
           'http://localhost:3095/api/users/login',
@@ -39,15 +36,15 @@ const LogIn = () => {
         .catch((error) => {
           console.log(error.response);
           console.log(error.response.data.statusCode);
-          setLogInError(error.response.status === 401);
+          setLogInError(error.response.status === 401 ? error.response.data : null);
         });
     },
     [email, password],
   );
 
-  // if (data === undefined) {
-  //   return <div>로딩중...</div>;
-  // }
+  if (data === undefined) {
+    return <div>로딩중...</div>;
+  }
   //
   // if (data) {
   //   return <Redirect to='/workspace/sleact/channel/일반' />;
@@ -58,6 +55,10 @@ const LogIn = () => {
   //   console.log('로그인됨', userData);
   //   return <Redirect to="/workspace/sleact/channel/일반" />;
   // }
+
+  if (data) {
+    navigate('/workspace/channel');
+  }
 
   return (
     <div id='container'>
@@ -74,7 +75,7 @@ const LogIn = () => {
           <div>
             <Input type='password' id='password' name='password' value={password} onChange={onChangePassword} />
           </div>
-          {logInError && <Error>이메일과 비밀번호 조합이 일치하지 않습니다.</Error>}
+          {logInError && <Error>{logInError}</Error>}
         </Label>
         <Button type='submit'>로그인</Button>
       </Form>
