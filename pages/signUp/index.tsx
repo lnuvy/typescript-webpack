@@ -1,10 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Form, Header, Input, Label, LinkContainer, Error, Success } from '@pages/signUp/styles';
 import useInputs from '@hooks/useInputs';
 import axios, { AxiosResponse } from 'axios';
+import useSWR from 'swr';
+import fetcher from '@utils/fetcher';
 
 const SignUp = () => {
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 100000,
+  });
+  const navigate = useNavigate();
   const [inputs, onChangeHook] = useInputs({});
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -58,6 +64,10 @@ const SignUp = () => {
     [inputs, password, passwordCheck, mismatchError],
   );
 
+  if (data) {
+    navigate('/workspace/channel');
+  }
+
   return (
     <div id='container'>
       <Header>Sleact</Header>
@@ -83,13 +93,7 @@ const SignUp = () => {
         <Label id='password-check-label'>
           <span>비밀번호 확인</span>
           <div>
-            <Input
-              type='password'
-              id='password-check'
-              name='password-check'
-              value={passwordCheck}
-              onChange={onChangePasswordCheck}
-            />
+            <Input type='password' id='password-check' name='password-check' value={passwordCheck} onChange={onChangePasswordCheck} />
           </div>
           {mismatchError && <Error>비밀번호가 일치하지 않습니다.</Error>}
           {signUpError && <Error>{signUpError}</Error>}

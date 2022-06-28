@@ -3,20 +3,16 @@ import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } fro
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from 'react-query';
+// import { useQuery, useQueryClient } from 'react-query';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
   // const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { data, error, isLoading } = useQuery('userInfo', () => {
-    axios.get('http://localhost:3095/api/users').then(({ data }) => {
-      console.log(data);
-      return data;
-    });
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 100000,
   });
-
+  const navigate = useNavigate();
   const [logInError, setLogInError] = useState(null);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -32,7 +28,9 @@ const LogIn = () => {
             withCredentials: true,
           },
         )
-        .then((response) => {})
+        .then(({ data }) => {
+          mutate(data, false);
+        })
         .catch((error) => {
           console.log(error.response);
           console.log(error.response.data.statusCode);
@@ -45,11 +43,6 @@ const LogIn = () => {
   if (data === undefined) {
     return <div>로딩중...</div>;
   }
-  //
-  // if (data) {
-  //   return <Redirect to='/workspace/sleact/channel/일반' />;
-  // }
-
   // console.log(error, userData);
   // if (!error && userData) {
   //   console.log('로그인됨', userData);
