@@ -20,6 +20,7 @@ import {
 import gravatar from 'gravatar';
 import loadable from '@loadable/component';
 import Menu from '@components/Menu';
+import LogIn from '@pages/login';
 
 const Channel = loadable(() => import('@pages/channel'));
 const DirectMessage = loadable(() => import('@pages/directMessage'));
@@ -38,11 +39,16 @@ const Workspace: FC<React.PropsWithChildren<{}>> = ({ children }) => {
     });
   }, []);
 
-  const onClickUserProfile = useCallback(() => {}, []);
+  const onClickUserProfile = useCallback(() => {
+    setShowUserMenu((prev) => !prev);
+  }, []);
 
   if (!data) {
+    // return <LogIn />;
     navigate('/login');
+    return <></>;
   }
+
   return (
     <div>
       <Header>
