@@ -3,7 +3,7 @@ import { CloseModalButton, CreateMenu } from '@components/Menu/Styles';
 
 interface Props {
   children: JSX.Element | JSX.Element[] | String;
-  onCloseModal: () => void;
+  onCloseModal: (e: any) => void;
   style: CSSProperties;
   closeButton?: boolean;
 }
