@@ -1,13 +1,12 @@
 import React from 'react';
 import Workspace from '@layouts/workspace/Workspace';
 
-const Channel = () => {
-  // @ts-ignore
+const DirectMessage = () => {
   return (
     <Workspace>
-
+      <div>하이하이</div>
     </Workspace>
   );
 };
 
-export default Channel;
+export default DirectMessage;
