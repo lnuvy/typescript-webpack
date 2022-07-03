@@ -11,6 +11,8 @@ interface Configuration extends WebpackConfiguration {
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+
+
 const config: webpack.Configuration = {
   name: 'sleact',
   mode: isDevelopment ? 'development' : 'production',

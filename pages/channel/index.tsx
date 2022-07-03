@@ -5,7 +5,7 @@ const Channel = () => {
   // @ts-ignore
   return (
     <Workspace>
-
+      채널!
     </Workspace>
   );
 };
