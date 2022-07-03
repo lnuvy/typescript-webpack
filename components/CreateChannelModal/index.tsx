@@ -4,19 +4,46 @@ import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
 import axios from 'axios';
 import { useParams } from 'react-router';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
+import { IChannel, IUser } from '@typings/db';
+import fetcher from '@utils/fetcher';
 
 interface Props {
   show: boolean;
   onCloseModal: () => void;
+  setShowCreateChannelModal: (flag: boolean) => void;
 }
 
-const CreateChannelModal: FC<Props> = ({ show, onCloseModal }) => {
-  const [newChannel, onChangeNewChannel] = useInput('');
+const CreateChannelModal: FC<Props> = ({ show, onCloseModal, setShowCreateChannelModal }) => {
+  const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
 
-  const onCreateChannel = useCallback(() => {
-    axios.post(`/api/workspaces/${workspace}/channel`, { name: newChannel }, { withCredentials: true });
-  }, [newChannel]);
+  const { data: userData, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 100000,
+  });
+
+  const { data: channelData, mutate: mutateChannel } = useSWR<IChannel[]>(
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
+  const onCreateChannel = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      axios
+        .post(`/api/workspaces/${workspace}/channels`, { name: newChannel }, { withCredentials: true })
+        .then(() => {
+          mutateChannel().then().catch();
+          setShowCreateChannelModal(false);
+          setNewChannel('');
+        })
+        .catch((err) => {
+          console.dir(err);
+          toast.error(err.response?.data, { position: 'bottom-center' });
+        });
+    },
+    [newChannel],
+  );
 
   if (!show) return null;
 
