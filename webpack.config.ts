@@ -85,7 +85,7 @@ const config: webpack.Configuration = {
     proxy: {
       // front,back 모두 로컬호스트일때 사용가능
       '/api/': {
-        target: 'http://localhost:3095',
+        target: '',
         changeOrigin: true,
       },
     },

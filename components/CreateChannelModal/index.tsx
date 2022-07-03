@@ -19,12 +19,12 @@ const CreateChannelModal: FC<Props> = ({ show, onCloseModal, setShowCreateChanne
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
 
-  const { data: userData, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  const { data: userData, mutate } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 100000,
   });
 
   const { data: channelData, mutate: mutateChannel } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    userData ? `/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
   const onCreateChannel = useCallback(
