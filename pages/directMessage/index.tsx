@@ -1,12 +1,8 @@
 import React from 'react';
-import Workspace from '@layouts/workspace/Workspace';
+import Index from '@layouts/workspace';
 
 const DirectMessage = () => {
-  return (
-    <Workspace>
-      <div>하이하이</div>
-    </Workspace>
-  );
+  return <div>하이하이</div>;
 };
 
 export default DirectMessage;

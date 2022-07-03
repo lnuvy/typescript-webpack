@@ -15,6 +15,7 @@ import {
   ProfileModal,
   RightMenu,
   WorkspaceButton,
+  WorkspaceModal,
   WorkspaceName,
   Workspaces,
   WorkspaceWrapper,
@@ -28,15 +29,20 @@ import { Button, Input, Label } from '@pages/signUp/styles';
 import useInputs from '@hooks/useInputs';
 import Modal from '@components/Modal';
 import { toast } from 'react-toastify';
+import { Routes, Route, useParams } from 'react-router';
+import CreateChannelModal from '@components/CreateChannelModal';
 
 const Channel = loadable(() => import('@pages/channel'));
 const DirectMessage = loadable(() => import('@pages/directMessage'));
 
 const Workspace: FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const navigate = useNavigate();
+  const {} = useParams();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [inputs, onChangeHook, setInputs] = useInputs({});
+  const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
 
   const {
     data: userData,
@@ -86,15 +92,28 @@ const Workspace: FC<React.PropsWithChildren<{}>> = ({ children }) => {
     [inputs],
   );
 
+  const onClickAddChannel = useCallback(() => {
+    setShowCreateChannelModal(true);
+  }, []);
+
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
+    setShowCreateChannelModal(false);
   }, []);
+
+  const toggleWorkspaceModal = useCallback(() => setShowWorkspaceModal((prev) => !prev), []);
+
+  // 리렌더링때마다 콘솔찍히지않으면서 userData 만 보기
+  const logFunction = useCallback(() => {
+    console.log(userData);
+  }, [userData]);
 
   if (!userData) {
     // return <LogIn />;
     navigate('/login');
     return <></>;
   }
+  logFunction();
 
   return (
     <div>
@@ -102,18 +121,16 @@ const Workspace: FC<React.PropsWithChildren<{}>> = ({ children }) => {
         <RightMenu>
           <span onClick={onCloseUserProfile}>
             <ProfileImg src={gravatar.url(userData.email, { s: '28px', d: 'retro' })} alt={userData.email} />
-            {showUserMenu && (
-              <Menu style={{ right: 0, top: 38 }} onCloseModal={onCloseUserProfile}>
-                <ProfileModal>
-                  <img src={gravatar.url(userData.nickname, { s: '36px', d: 'retro' })} alt={userData.nickname} />
-                  <div>
-                    <span id='profile-name'>{userData.nickname}</span>
-                    <span id='profile-active'>Active</span>
-                  </div>
-                </ProfileModal>
-                <LogOutButton onClick={onLogout}>로그아웃</LogOutButton>
-              </Menu>
-            )}
+            <Menu style={{ right: 0, top: 38 }} show={showUserMenu} onCloseModal={onCloseUserProfile}>
+              <ProfileModal>
+                <img src={gravatar.url(userData.nickname, { s: '36px', d: 'retro' })} alt={userData.nickname} />
+                <div>
+                  <span id='profile-name'>{userData.nickname}</span>
+                  <span id='profile-active'>Active</span>
+                </div>
+              </ProfileModal>
+              <LogOutButton onClick={onLogout}>로그아웃</LogOutButton>
+            </Menu>
           </span>
         </RightMenu>
       </Header>
@@ -121,33 +138,46 @@ const Workspace: FC<React.PropsWithChildren<{}>> = ({ children }) => {
         <Workspaces>
           {userData.Workspaces.map((ws) => {
             return (
-              <Link key={ws.id} to={`/workspace/${123}/channel/일반`}>
+              <Link key={ws.id} to={`/workspace/${ws.url}/channel/일반`}>
                 <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>
               </Link>
             );
           })}
-          <AddButton onClick={onClickCreateWorkspace}></AddButton>
+          <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName>Sleact</WorkspaceName>
-          <MenuScroll>tmzmfhf</MenuScroll>
+          <WorkspaceName onClick={toggleWorkspaceModal}>Sleact</WorkspaceName>
+          <MenuScroll>
+            <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
+              <WorkspaceModal>
+                <h2>Slack</h2>
+                <button onClick={onClickAddChannel}>채널 만들기</button>
+                <button onClick={onLogout}>로그아웃</button>
+              </WorkspaceModal>
+            </Menu>
+          </MenuScroll>
         </Channels>
-        <Chats>Chats</Chats>
+        <Chats>
+          <Routes>
+            <Route path='/channel/:name' element={<Channel />} />
+            <Route path='/dm/:name' element={<DirectMessage />} />
+          </Routes>
+        </Chats>
       </WorkspaceWrapper>
       <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
         <form onSubmit={onCreateWorkspace}>
           <Label id='workspace-label'>
             <span>워크스페이스 이름</span>
-            <Input id='workspace' name='workspace' value={inputs.workspace} onChange={onChangeHook} />
+            <Input id='workspace' name='workspace' value={inputs.workspace || ''} onChange={onChangeHook} />
           </Label>
           <Label id='workspace-url-label'>
             <span>워크스페이스 url</span>
-            <Input id='url' name='url' value={inputs.url} onChange={onChangeHook} />
+            <Input id='url' name='url' value={inputs.url || ''} onChange={onChangeHook} />
           </Label>
           <Button type='submit'>생성하기</Button>
         </form>
       </Modal>
-      {children}
+      <CreateChannelModal show={showCreateChannelModal} onCloseModal={onCloseModal} />
     </div>
   );
 };

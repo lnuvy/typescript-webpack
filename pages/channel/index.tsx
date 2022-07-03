@@ -1,13 +1,9 @@
 import React from 'react';
-import Workspace from '@layouts/workspace/Workspace';
+import Index from '@layouts/workspace';
 
 const Channel = () => {
   // @ts-ignore
-  return (
-    <Workspace>
-
-    </Workspace>
-  );
+  return <>안녕하세요</>;
 };
 
 export default Channel;
