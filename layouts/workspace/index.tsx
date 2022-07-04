@@ -153,7 +153,7 @@ const Workspace: FC<React.PropsWithChildren<{}>> = ({ children }) => {
       </Header>
       <WorkspaceWrapper>
         <Workspaces>
-          {userData.Workspaces.map((ws) => {
+          {userData.Workspaces?.map((ws) => {
             return (
               <Link key={ws.id} to={`/workspace/${ws.url}/channel/일반`}>
                 <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>

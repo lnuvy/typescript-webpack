@@ -1,19 +1,42 @@
-import React, { FC, useCallback } from 'react';
+import React, { ChangeEvent, FC, useCallback, useEffect, useRef } from 'react';
 import { ChatArea, Form, MentionsTextarea, SendButton, Toolbox } from '@components/ChatBox/styles';
+import autosize from 'autosize';
 
 interface Props {
-  chat: String;
+  chat: string | any;
+  onSubmitForm: (e: React.FormEvent) => void;
+  onChangeChat: (e: any) => void;
+  placeholder?: string;
 }
 
-const ChatBox: FC<Props> = ({ chat }) => {
-  const onSubmitForm = useCallback((e: React.FormEvent) => {}, []);
+const ChatBox: FC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
+  const textareaRef = useRef(null);
+  useEffect(() => {
+    if (textareaRef.current) {
+      autosize(textareaRef.current);
+    }
+  }, []);
 
+  const onKeyDownChat = useCallback((e: any) => {
+    if (e.key === 'Enter') {
+      if (!e.shiftKey) {
+        e.preventDefault();
+        onSubmitForm(e);
+      }
+    }
+  }, []);
   return (
     <ChatArea>
       <Form onSubmit={onSubmitForm}>
-        <MentionsTextarea>
-          <textarea />
-        </MentionsTextarea>
+        <MentionsTextarea
+          id='editor-chat'
+          value={chat}
+          onChange={onChangeChat}
+          onKeyDown={onKeyDownChat}
+          placeholder={placeholder}
+          ref={textareaRef}
+        />
+
         <Toolbox>
           <SendButton
             className={
@@ -27,6 +50,7 @@ const ChatBox: FC<Props> = ({ chat }) => {
             disabled={!chat?.trim()}
           >
             <i className='c-icon c-icon--paperplane-filled' aria-hidden='true' />
+            전송
           </SendButton>
         </Toolbox>
       </Form>
