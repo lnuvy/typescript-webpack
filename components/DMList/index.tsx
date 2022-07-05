@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import { CollapseButton } from '@components/DMList/styles';
 import { NavLink } from 'react-router-dom';
+import useSocket from '@hooks/useSocket';
 
 interface Props {
   userData?: IUser;
@@ -17,6 +18,7 @@ const DMList: FC<Props> = ({ userData }) => {
     fetcher,
   );
 
+  const [socket] = useSocket(workspace);
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [countList, setCountList] = useState<{ [key: string]: number }>({});
   const [onlineList, setOnlineList] = useState<number[]>([]);
@@ -49,6 +51,15 @@ const DMList: FC<Props> = ({ userData }) => {
     setOnlineList([]);
     setCountList({});
   }, [workspace]);
+
+  useEffect(() => {
+    socket?.on('onlineList', (data: number[]) => {
+      setOnlineList(data);
+    });
+    return () => {
+      socket?.off('onlineList');
+    };
+  }, [socket]);
 
   return (
     <>
@@ -83,7 +94,7 @@ const DMList: FC<Props> = ({ userData }) => {
                   data-qa-presence-active='false'
                   data-qa-presence-dnd='false'
                 />
-                <span>{member.nickname}</span>
+                <span style={{ background: `${isOnline ? 'tomato' : ''}` }}>{member.nickname}</span>
                 {member.id === userData?.id && <span> (나)</span>}
               </NavLink>
             );

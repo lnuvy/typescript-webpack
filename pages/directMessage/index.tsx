@@ -20,6 +20,8 @@ const DirectMessage = () => {
     fetcher,
   );
 
+  // console.log(chatData);
+
   // const onSubmitForm = useCallback((e: React.FormEvent) => {}, []);
   const onSubmitForm = useCallback(
     (e: React.FormEvent) => {
@@ -37,7 +39,7 @@ const DirectMessage = () => {
     [chat],
   );
 
-  if (!userData || !myData) {
+  if (!userData || !myData || !chatData) {
     return null;
   }
 
@@ -47,7 +49,7 @@ const DirectMessage = () => {
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
-      <ChatList />
+      <ChatList chatData={chatData} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
