@@ -8,7 +8,7 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
+  const { data, error, mutate } = useSWR('/api/users', fetcher, {
     dedupingInterval: 100000,
   });
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const LogIn = () => {
       setLogInError(null);
       axios
         .post(
-          'http://localhost:3095/api/users/login',
+          '/api/users/login',
           { email, password },
           {
             withCredentials: true,
@@ -49,7 +49,7 @@ const LogIn = () => {
   // }
 
   if (data) {
-    navigate('/workspace/channel');
+    navigate('workspace/sleact/channel/일반');
   }
 
   return (
