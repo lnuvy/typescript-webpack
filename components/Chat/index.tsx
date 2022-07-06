@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { ChatWrapper } from '@components/Chat/styles';
 import gravatar from 'gravatar';
 import { IDM } from '@typings/db';
@@ -17,24 +17,25 @@ const Chat: FC<Props> = ({ data }) => {
 
   const user = data.Sender;
 
-  // \d 숫자
-  // +는 1개이상 ?는 0개나 1개, *은 0개이상
-  // g는 모두찾기
-  const result = regexifyString({
-    input: data.content,
-    pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
-    decorator(match, index) {
-      const arr = match.match(/@\[(.+?)]\((\d+?)\)/)!;
-      if (arr) {
-        return (
-          <Link key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
-            @{arr[1]}
-          </Link>
-        );
-      }
-      return <br key={index} />;
-    },
-  });
+  const result = useMemo(
+    () =>
+      regexifyString({
+        input: data.content,
+        pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
+        decorator(match, index) {
+          const arr = match.match(/@\[(.+?)]\((\d+?)\)/)!;
+          if (arr) {
+            return (
+              <Link key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
+                @{arr[1]}
+              </Link>
+            );
+          }
+          return <br key={index} />;
+        },
+      }),
+    [data.content],
+  );
 
   return (
     <ChatWrapper>
@@ -50,4 +51,4 @@ const Chat: FC<Props> = ({ data }) => {
   );
 };
 
-export default Chat;
+export default memo(Chat);
