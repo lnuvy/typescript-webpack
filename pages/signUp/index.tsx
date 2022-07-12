@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button, Form, Header, Input, Label, LinkContainer, Error, Success } from '@pages/signUp/styles';
 import useInputs from '@hooks/useInputs';
 import { useUser } from '@queries/hooks';
@@ -50,7 +50,7 @@ const SignUp = () => {
   if (isFetching) return <div>로딩중...</div>;
 
   if (data?.nickname) {
-    navigate('/workspace/sleact/channel/일반');
+    return <Navigate to='/workspace/sleact/channel/일반' />;
   }
 
   return (

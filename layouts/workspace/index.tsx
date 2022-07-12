@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import { fetcher } from '../../queries/fetcher';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import './Styles';
 import {
   AddButton,
@@ -106,7 +106,8 @@ const Workspace: FC = () => {
   }, []);
 
   if (!data) {
-    navigate('/login');
+    // navigate('/login');
+    return <Navigate to='/login' />;
   }
 
   return (

@@ -1,17 +1,14 @@
 import useInput from '@hooks/useInput';
 import { Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/signUp/styles';
 import React, { useCallback, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useUser } from '@queries/hooks';
 import { loginAPI } from '@pages/login/api';
 import { useQueryClient } from 'react-query';
-import { log } from 'util';
 
 const LogIn = () => {
   const queryClient = useQueryClient();
-  const { data, isFetching, error } = useUser();
-
-  const navigate = useNavigate();
+  const { data: userData, error } = useUser();
   const [logInError, setLogInError] = useState(null);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -32,17 +29,13 @@ const LogIn = () => {
     [email, password],
   );
 
-  if (data === undefined) {
+  if (userData === undefined) {
     return <div>로딩중...</div>;
   }
-  // console.log(error, userData);
-  // if (!error && userData) {
-  //   console.log('로그인됨', userData);
-  //   return <Redirect to="/workspace/sleact/channel/일반" />;
-  // }
 
-  if (data) {
-    navigate('workspace/sleact/channel/일반');
+  if (!error && userData) {
+    console.log('로그인됨', userData);
+    return <Navigate to='/workspace/sleact/channel/일반' />;
   }
 
   return (
