@@ -2,14 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Form, Header, Input, Label, LinkContainer, Error, Success } from '@pages/signUp/styles';
 import useInputs from '@hooks/useInputs';
-import axios, { AxiosResponse } from 'axios';
-import useSWR from 'swr';
-import fetcher from '@utils/fetcher';
+import { useUser } from '@queries/hooks';
+import { registerAPI } from '@pages/signUp/api';
 
 const SignUp = () => {
-  const { data, error, mutate } = useSWR('/api/users', fetcher, {
-    dedupingInterval: 100000,
-  });
   const navigate = useNavigate();
   const [inputs, onChangeHook] = useInputs({});
   const [password, setPassword] = useState('');
@@ -18,6 +14,8 @@ const SignUp = () => {
 
   const [signUpError, setSignUpError] = useState('');
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+
+  const { data, isFetching, error } = useUser();
 
   const onChangePassword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,32 +37,19 @@ const SignUp = () => {
     (e: React.FormEvent) => {
       e.preventDefault();
       if (!mismatchError && inputs.nickname) {
-        console.log('성공');
-
         // 비동기요청에서 setState 를 하는경우, 미리 초기화를 해주는것이 좋다.
         setSignUpError('');
         setSignUpSuccess(false);
-        axios
-          .post('/api/users', {
-            email: inputs.email,
-            nickname: inputs.nickname,
-            password,
-          })
-          .then((res: AxiosResponse) => {
-            console.log(res);
-            setSignUpSuccess(true);
-          })
-          // 여기 타입 못찾겠음.. Error | AxiosError 아님
-          .catch((err: any) => {
-            console.log(err.response);
-            setSignUpError(err.response.data);
-          });
+
+        registerAPI(inputs, password).then(setSignUpSuccess).catch(setSignUpError);
       }
     },
     [inputs, password, passwordCheck, mismatchError],
   );
 
-  if (data) {
+  if (isFetching) return <div>로딩중...</div>;
+
+  if (data?.nickname) {
     navigate('/workspace/sleact/channel/일반');
   }
 
@@ -93,7 +78,13 @@ const SignUp = () => {
         <Label id='password-check-label'>
           <span>비밀번호 확인</span>
           <div>
-            <Input type='password' id='password-check' name='password-check' value={passwordCheck} onChange={onChangePasswordCheck} />
+            <Input
+              type='password'
+              id='password-check'
+              name='password-check'
+              value={passwordCheck}
+              onChange={onChangePasswordCheck}
+            />
           </div>
           {mismatchError && <Error>비밀번호가 일치하지 않습니다.</Error>}
           {signUpError && <Error>{signUpError}</Error>}

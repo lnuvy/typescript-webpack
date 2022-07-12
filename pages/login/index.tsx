@@ -1,39 +1,32 @@
 import useInput from '@hooks/useInput';
-import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/signUp/styles';
-import axios from 'axios';
+import { Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/signUp/styles';
 import React, { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { useQuery, useQueryClient } from 'react-query';
-import useSWR from 'swr';
-import fetcher from '@utils/fetcher';
+import { useUser } from '@queries/hooks';
+import { loginAPI } from '@pages/login/api';
+import { useQueryClient } from 'react-query';
+import { log } from 'util';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('/api/users', fetcher, {
-    dedupingInterval: 100000,
-  });
+  const queryClient = useQueryClient();
+  const { data, isFetching, error } = useUser();
+
   const navigate = useNavigate();
   const [logInError, setLogInError] = useState(null);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
+
   const onSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
       setLogInError(null);
-      axios
-        .post(
-          '/api/users/login',
-          { email, password },
-          {
-            withCredentials: true,
-          },
-        )
-        .then(({ data }) => {
-          mutate(data, false);
+
+      loginAPI(email, password)
+        .then(() => {
+          queryClient.refetchQueries('/api/users').then();
         })
-        .catch((error) => {
-          console.log(error.response);
-          console.log(error.response.data.statusCode);
-          setLogInError(error.response.status === 401 ? error.response.data : null);
+        .catch((message) => {
+          setLogInError(message);
         });
     },
     [email, password],
