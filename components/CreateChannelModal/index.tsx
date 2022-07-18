@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import { IChannel, IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
+import { useQuery } from 'react-query';
 
 interface Props {
   show: boolean;
@@ -19,6 +20,7 @@ const CreateChannelModal: FC<Props> = ({ show, onCloseModal, setShowCreateChanne
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
 
+  const {data: userData} = useQuery()
   const { data: userData, mutate } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 100000,
   });

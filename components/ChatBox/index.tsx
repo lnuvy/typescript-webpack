@@ -7,6 +7,7 @@ import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import { useParams } from 'react-router';
 import gravatar from 'gravatar';
+import { useQuery } from 'react-query';
 
 interface Props {
   chat: string | any;
@@ -17,6 +18,8 @@ interface Props {
 
 const ChatBox: FC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
   const { workspace, name } = useParams();
+
+  const { data: userData } = useQuery()
   const {
     data: userData,
     error,
@@ -24,6 +27,8 @@ const ChatBox: FC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) =
   } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 100000,
   });
+
+  const {data: memberData} = useQuery()
   const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
   const textareaRef = useRef(null);
   useEffect(() => {

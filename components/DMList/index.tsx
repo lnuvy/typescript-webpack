@@ -6,6 +6,7 @@ import fetcher from '@utils/fetcher';
 import { CollapseButton } from '@components/DMList/styles';
 import { NavLink } from 'react-router-dom';
 import useSocket from '@hooks/useSocket';
+import { useQuery } from 'react-query';
 
 interface Props {
   userData?: IUser;
@@ -13,6 +14,8 @@ interface Props {
 
 const DMList: FC<Props> = ({ userData }) => {
   const { workspace } = useParams();
+
+  const {data: memberData} = useQuery()
   const { data: memberData } = useSWR<IUserWithOnline[]>(
     userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher,
