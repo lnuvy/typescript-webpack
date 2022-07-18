@@ -8,6 +8,7 @@ import React, { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
+import { useQuery } from 'react-query';
 
 interface Props {
   show: boolean;
@@ -17,7 +18,11 @@ interface Props {
 const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChannelModal }) => {
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
   const [newMember, onChangeNewMember, setNewMember] = useInput('');
+
+  const {data: userData} = useQuery()
   const { data: userData } = useSWR<IUser>('/api/users', fetcher);
+
+  const {refetch} = useQuery()
   const { mutate: mutateMembers } = useSWR<IUser[]>(
     userData && channel ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
