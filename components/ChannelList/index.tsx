@@ -15,6 +15,8 @@ const ChannelList: FC = () => {
 
   const {data: userData} = useQuery('/api', fetcher, {})
   const { data: userData } = useSWR<IUser>('/api/users', fetcher, { dedupingInterval: 2000 });
+
+  const {data: channelData} = useQuery()
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
   const toggleChannelCollapse = useCallback(() => {
