@@ -5,12 +5,15 @@ import fetcher from '@utils/fetcher';
 import { useParams } from 'react-router';
 import { CollapseButton } from '@components/DMList/styles';
 import { NavLink } from 'react-router-dom';
+import { useQuery } from 'react-query';
 
 const ChannelList: FC = () => {
   const { workspace } = useParams<{ workspace?: string }>();
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [countList, setCountList] = useState<{ [key: string]: number }>({});
 
+
+  const {data: userData} = useQuery('/api', fetcher, {})
   const { data: userData } = useSWR<IUser>('/api/users', fetcher, { dedupingInterval: 2000 });
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
