@@ -27,6 +27,7 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
     userData && channel ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
+  const {refetch} = useQuery()
 
   const onInviteMember = useCallback(
     (e: React.FormEvent) => {
