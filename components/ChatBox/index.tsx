@@ -8,6 +8,7 @@ import fetcher from '@utils/fetcher';
 import { useParams } from 'react-router';
 import gravatar from 'gravatar';
 import { useQuery } from 'react-query';
+import { useUser } from '@queries/hooks';
 
 interface Props {
   chat: string | any;
@@ -19,17 +20,25 @@ interface Props {
 const ChatBox: FC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
   const { workspace, name } = useParams();
 
-  const { data: userData } = useQuery()
-  const {
-    data: userData,
-    error,
-    mutate,
-  } = useSWR<IUser | false>('/api/users', fetcher, {
-    dedupingInterval: 100000,
-  });
+  const { data: userData } = useUser()
+  console.log(userData);
+  // const {
+  //   data: userData,
+  //   error,
+  //   mutate,
+  // } = useSWR<IUser | false>('/api/users', fetcher, {
+  //   dedupingInterval: 100000,
+  // });
 
   const {data: memberData} = useQuery()
-  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const { data: memberData } = useQuery<IUser[]>(
+    ['workspace', workspace, 'member'],
+    () => fetcher({ queryKey: `/api/workspaces/${workspace}/members` }),
+    {
+      enabled: !!userData,
+    },
+  );
+
   const textareaRef = useRef(null);
   useEffect(() => {
     if (textareaRef.current) {
