@@ -11,6 +11,7 @@ interface Props {
   data: IDM;
 }
 
+// 흐어 공부는 언제하지
 const Chat: FC<Props> = ({ data }) => {
   const { workspace, name } = useParams();
   if (!data) return null;
