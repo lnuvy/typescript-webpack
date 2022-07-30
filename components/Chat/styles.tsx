@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+// styled
 export const ChatWrapper = styled.div`
   display: flex;
   flex-direction: column;

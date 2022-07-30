@@ -10,7 +10,7 @@ const container = document.getElementById('app');
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 root.render(
   <QueryClientProvider client={queryClient}>
-    <ReactQueryDevtools initialIsOpen={true} />
+    <ReactQueryDevtools initialIsOpen={false} />
     <BrowserRouter>
       <App />
     </BrowserRouter>

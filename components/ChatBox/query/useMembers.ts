@@ -7,4 +7,6 @@ export const userMembers = (workspace: string) => {
 
 export const useGetUser = () => useQuery([`/api/member`], fetcher)
 
-// export const userGetMemebers = () => useQuery()
+// export const useGetMemebers = () => useQuery()
+
+// export const useGetChatList = () => useQuery()

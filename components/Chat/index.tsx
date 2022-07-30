@@ -20,6 +20,7 @@ const Chat: FC<Props> = ({ data }) => {
 
   const result = useMemo(
     () =>
+      // reg 정규식은 성능이 좋은편이 아님
       regexifyString({
         input: data.content,
         pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
