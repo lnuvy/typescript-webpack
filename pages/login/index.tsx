@@ -7,6 +7,7 @@ import React, { useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useUser } from '@queries/hooks';
+import { loginAPI } from '@pages/login/api';
 
 const LogIn = () => {
   const queryClient = useQueryClient();
@@ -17,12 +18,7 @@ const LogIn = () => {
 
   const mutation = useMutation<IUser, AxiosError, { email: string; password: string }>(
     '/api/users',
-    (data) =>
-      axios
-        .post('/api/users/login', data, {
-          withCredentials: true,
-        })
-        .then(({ data }) => data),
+    (data) => loginAPI(data),
     {
       onMutate() {
         setLogInError(false);

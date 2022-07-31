@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-export const loginAPI = (email: string, password: string) =>
+interface loginParams {
+  email: string | undefined;
+  password: string | undefined;
+}
+
+export const loginAPI = ({ email, password }: loginParams) =>
   axios
     .post(
       '/api/users/login',
