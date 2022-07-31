@@ -1,65 +1,83 @@
 import useInput from '@hooks/useInput';
 import { Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/signUp/styles';
+import { IUser } from '@typings/db';
+import fetcher from '@utils/fetcher';
+import axios, { AxiosError } from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { useUser } from '@queries/hooks';
-import { loginAPI } from '@pages/login/api';
-import { useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const LogIn = () => {
   const queryClient = useQueryClient();
-  const { data: userData, error } = useUser();
-  const [logInError, setLogInError] = useState(null);
+
+  const { isLoading, isSuccess, status, isError, data, error } = useQuery('user', () =>
+    fetcher({ queryKey: '/api/users' }),
+  );
+
+  console.log(data, status, isError, error, isLoading);
+  const mutation = useMutation<IUser, AxiosError, { email: string; password: string }>(
+    'user',
+    (data) =>
+      axios
+        .post('/api/users/login', data, {
+          withCredentials: true,
+        })
+        .then((response) => response.data),
+    {
+      onMutate() {
+        setLogInError(false);
+      },
+      onSuccess() {
+        queryClient.refetchQueries('user');
+      },
+      onError(error: any) {
+        setLogInError(error.response?.data?.code === 401);
+      },
+    },
+  );
+
+  const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
-
   const onSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      setLogInError(null);
-
-      loginAPI(email, password)
-        .then(() => {
-          queryClient.refetchQueries('/api/users').then();
-        })
-        .catch((message) => {
-          setLogInError(message);
-        });
+      mutation.mutate({ email, password });
     },
-    [email, password],
+    [email, password, mutation],
   );
 
-  if (userData === undefined) {
+  if (isLoading) {
     return <div>로딩중...</div>;
   }
 
-  if (!error && userData) {
-    console.log('로그인됨', userData);
+  if (!error && data) {
+    console.log('로그인됨 : Login 54Line', data, error); // TODO: 여기 콘솔
     return <Navigate to='/workspace/sleact/channel/일반' />;
   }
 
   return (
-    <div id='container'>
+    <div id="container">
       <Header>Sleact</Header>
       <Form onSubmit={onSubmit}>
-        <Label id='email-label'>
+        <Label id="email-label">
           <span>이메일 주소</span>
           <div>
-            <Input type='email' id='email' name='email' value={email} onChange={onChangeEmail} />
+            <Input type="email" id="email" name="email" value={email} onChange={onChangeEmail} />
           </div>
         </Label>
-        <Label id='password-label'>
+        <Label id="password-label">
           <span>비밀번호</span>
           <div>
-            <Input type='password' id='password' name='password' value={password} onChange={onChangePassword} />
+            <Input type="password" id="password" name="password" value={password} onChange={onChangePassword} />
           </div>
-          {logInError && <Error>{logInError}</Error>}
+          {logInError && <Error>이메일과 비밀번호 조합이 일치하지 않습니다.</Error>}
         </Label>
-        <Button type='submit'>로그인</Button>
+        <Button type="submit">로그인</Button>
       </Form>
       <LinkContainer>
         아직 회원이 아니신가요?&nbsp;
-        <Link to='/signup'>회원가입 하러가기</Link>
+        <Link to="/signup">회원가입 하러가기</Link>
       </LinkContainer>
     </div>
   );

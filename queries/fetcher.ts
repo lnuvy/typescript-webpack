@@ -12,11 +12,4 @@ export const fetcher = (ctx: QueryFunctionContext) => {
   return axios.get(`${queryKey}`, { params, withCredentials: true }).then(({ data }) => data);
 };
 
-// useMutation
 
-// const get = async (url: string, params: Params) => {
-//   const { data } = await axios.get(url, {
-//     params,
-//   })
-//   return data
-// }

@@ -40,7 +40,7 @@ import { logoutAPI } from '@pages/login/api';
 import { useUser } from '@queries/hooks';
 
 const Channel = loadable(() => import('@pages/channel'));
-const DirectMessage = loadable(() => import('@pages/directMessage'));
+// const DirectMessage = loadable(() => import('@pages/directMessage'));
 
 const Workspace: FC = () => {
   const { workspace, name } = useParams();
