@@ -3,14 +3,13 @@ import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import React, { useCallback, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from './styles';
 import { Link, Navigate } from 'react-router-dom';
+import { useUser } from '@queries/hooks';
 
 const SignUp = () => {
-  const { isLoading, isSuccess, status, isError, data, error } = useQuery('user', () =>
-    fetcher({ queryKey: '/api/users' }),
-  );
+  const { isLoading, isSuccess, status, isError, data, error } = useUser()
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -68,7 +67,7 @@ const SignUp = () => {
     return <div>로딩중...</div>;
   }
 
-  if (data?.nickname) {
+  if (data) {
     return <Navigate to='/workspace/sleact/channel/일반' />;
   }
 

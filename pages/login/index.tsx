@@ -6,29 +6,29 @@ import axios, { AxiosError } from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useUser } from '@queries/hooks';
 
 const LogIn = () => {
   const queryClient = useQueryClient();
 
-  const { isLoading, isSuccess, status, isError, data, error } = useQuery('user', () =>
-    fetcher({ queryKey: '/api/users' }),
-  );
+  const { isLoading, isSuccess, status, isError, data, error } = useUser();
 
   console.log(data, status, isError, error, isLoading);
+
   const mutation = useMutation<IUser, AxiosError, { email: string; password: string }>(
-    'user',
+    '/api/users',
     (data) =>
       axios
         .post('/api/users/login', data, {
           withCredentials: true,
         })
-        .then((response) => response.data),
+        .then(({ data }) => data),
     {
       onMutate() {
         setLogInError(false);
       },
       onSuccess() {
-        queryClient.refetchQueries('user');
+        queryClient.refetchQueries('/api/users').then();
       },
       onError(error: any) {
         setLogInError(error.response?.data?.code === 401);
@@ -51,33 +51,30 @@ const LogIn = () => {
     return <div>로딩중...</div>;
   }
 
-  if (!error && data) {
-    console.log('로그인됨 : Login 54Line', data, error); // TODO: 여기 콘솔
-    return <Navigate to='/workspace/sleact/channel/일반' />;
-  }
+  if (!error && data) return <Navigate to='/workspace/sleact/channel/일반' />;
 
   return (
-    <div id="container">
+    <div id='container'>
       <Header>Sleact</Header>
       <Form onSubmit={onSubmit}>
-        <Label id="email-label">
+        <Label id='email-label'>
           <span>이메일 주소</span>
           <div>
-            <Input type="email" id="email" name="email" value={email} onChange={onChangeEmail} />
+            <Input type='email' id='email' name='email' value={email} onChange={onChangeEmail} />
           </div>
         </Label>
-        <Label id="password-label">
+        <Label id='password-label'>
           <span>비밀번호</span>
           <div>
-            <Input type="password" id="password" name="password" value={password} onChange={onChangePassword} />
+            <Input type='password' id='password' name='password' value={password} onChange={onChangePassword} />
           </div>
           {logInError && <Error>이메일과 비밀번호 조합이 일치하지 않습니다.</Error>}
         </Label>
-        <Button type="submit">로그인</Button>
+        <Button type='submit'>로그인</Button>
       </Form>
       <LinkContainer>
         아직 회원이 아니신가요?&nbsp;
-        <Link to="/signup">회원가입 하러가기</Link>
+        <Link to='/signup'>회원가입 하러가기</Link>
       </LinkContainer>
     </div>
   );
