@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import useSWR from 'swr';
+import React, { useCallback, useRef, useState } from 'react';
+import useSWR  from 'swr';
 import { useParams } from 'react-router';
 import fetcher from '@utils/fetcher';
 import gravatar from 'gravatar';
@@ -10,9 +10,12 @@ import axios from 'axios';
 import { IDM } from '@typings/db';
 import useInput from '@hooks/useInput';
 import makeSections from '@utils/makeSections';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const DirectMessage = () => {
   const { workspace, name } = useParams();
+  const scrollbarRef = useRef<Scrollbars>(null);
+
   const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${name}`, fetcher);
   const { data: myData } = useSWR(`/api/users`, fetcher);
   const [chat, onChangeChat, setChat] = useInput('');
@@ -44,7 +47,7 @@ const DirectMessage = () => {
     return null;
   }
 
-  const chatSections = makeSections(chatData ? [...chatData].reverse() : [])
+  const chatSections = makeSections(chatData ? [...chatData].reverse() : []);
 
   return (
     <Container>
@@ -52,7 +55,7 @@ const DirectMessage = () => {
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
-      <ChatList chatSections={chatSections} />
+      <ChatList chatSections={chatSections} ref={scrollbarRef} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
