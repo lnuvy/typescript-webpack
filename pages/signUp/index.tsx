@@ -9,7 +9,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useUser } from '@queries/hooks';
 
 const SignUp = () => {
-  const { isLoading, isSuccess, status, isError, data, error } = useUser()
+  const { isLoading, isSuccess, status, isError, data, error } = useUser();
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -28,7 +28,7 @@ const SignUp = () => {
   );
 
   const onChangePasswordCheck = useCallback(
-    (e : React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       setPasswordCheck(e.target.value);
       setMismatchError(e.target.value !== password);
     },
@@ -56,7 +56,6 @@ const SignUp = () => {
     (e: React.FormEvent) => {
       e.preventDefault();
       if (!mismatchError && nickname) {
-        console.log('서버로 회원가입하기');
         mutation.mutate({ email, nickname, password });
       }
     },
@@ -72,34 +71,34 @@ const SignUp = () => {
   }
 
   return (
-    <div id="container">
+    <div id='container'>
       <Header>Sleact</Header>
       <Form onSubmit={onSubmit}>
-        <Label id="email-label">
+        <Label id='email-label'>
           <span>이메일 주소</span>
           <div>
-            <Input type="email" id="email" name="email" value={email} onChange={onChangeEmail} />
+            <Input type='email' id='email' name='email' value={email} onChange={onChangeEmail} />
           </div>
         </Label>
-        <Label id="nickname-label">
+        <Label id='nickname-label'>
           <span>닉네임</span>
           <div>
-            <Input type="text" id="nickname" name="nickname" value={nickname} onChange={onChangeNickname} />
+            <Input type='text' id='nickname' name='nickname' value={nickname} onChange={onChangeNickname} />
           </div>
         </Label>
-        <Label id="password-label">
+        <Label id='password-label'>
           <span>비밀번호</span>
           <div>
-            <Input type="password" id="password" name="password" value={password} onChange={onChangePassword} />
+            <Input type='password' id='password' name='password' value={password} onChange={onChangePassword} />
           </div>
         </Label>
-        <Label id="password-check-label">
+        <Label id='password-check-label'>
           <span>비밀번호 확인</span>
           <div>
             <Input
-              type="password"
-              id="password-check"
-              name="password-check"
+              type='password'
+              id='password-check'
+              name='password-check'
               value={passwordCheck}
               onChange={onChangePasswordCheck}
             />
@@ -109,11 +108,11 @@ const SignUp = () => {
           {signUpError && <Error>{signUpError}</Error>}
           {signUpSuccess && <Success>회원가입되었습니다! 로그인해주세요.</Success>}
         </Label>
-        <Button type="submit">회원가입</Button>
+        <Button type='submit'>회원가입</Button>
       </Form>
       <LinkContainer>
         이미 회원이신가요?&nbsp;
-        <Link to="/login">로그인 하러가기</Link>
+        <Link to='/login'>로그인 하러가기</Link>
       </LinkContainer>
     </div>
   );

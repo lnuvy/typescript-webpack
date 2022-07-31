@@ -105,16 +105,16 @@ const Workspace: FC = () => {
     [newWorkspace, newUrl, queryClient, setNewUrl, setNewWorkspace],
   );
 
-
   const onLogout = useCallback(() => {
-    logoutAPI().then(() => {
+    logoutAPI().then((res) => {
+      console.log('!!!!!!!!로그아웃!!!!!!!');
+      console.log(res);
       queryClient.setQueryData('/api/users', () => null);
     });
   }, []);
 
   const onCloseUserProfile = useCallback((e: any) => {
     e.stopPropagation();
-    console.log('click');
     setShowUserMenu((prev) => !prev);
   }, []);
 

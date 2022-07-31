@@ -23,6 +23,5 @@ export const loginAPI = ({ email, password }: loginParams) =>
 
 export const logoutAPI = () =>
   axios.post(`/api/users/logout`, null, { withCredentials: true }).then((res) => {
-    console.log(res);
     if (res.data === 'ok') return true;
   });

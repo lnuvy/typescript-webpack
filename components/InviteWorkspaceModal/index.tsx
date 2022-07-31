@@ -29,7 +29,7 @@ const InviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
           email: newMember,
         })
         .then((response) => {
-          queryClient.refetchQueries(['workspace', workspace, 'member']);
+          queryClient.refetchQueries([`/api/workspaces/${workspace}/members`]);
           setShowInviteWorkspaceModal(false);
           setNewMember('');
         })
@@ -44,11 +44,11 @@ const InviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
   return (
     <Modal show={show} onCloseModal={onCloseModal}>
       <form onSubmit={onInviteMember}>
-        <Label id="member-label">
+        <Label id='member-label'>
           <span>이메일</span>
-          <Input id="member" type="email" value={newMember} onChange={onChangeNewMember} />
+          <Input id='member' type='email' value={newMember} onChange={onChangeNewMember} />
         </Label>
-        <Button type="submit">초대하기</Button>
+        <Button type='submit'>초대하기</Button>
       </form>
     </Modal>
   );

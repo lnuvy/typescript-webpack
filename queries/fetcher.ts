@@ -15,9 +15,6 @@ export const fetcher = (ctx: QueryFunctionContext) => {
   const params = ctx.queryKey.filter((k, i) => {
     if (i !== 0) return k;
   });
-  console.log(ctx.queryKey[1]);
-  console.log('fetcher 함수');
-  console.log(queryKey, params);
 
   return axios.get(`${queryKey}`, { params, withCredentials: true }).then(({ data }) => data);
 };

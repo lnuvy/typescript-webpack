@@ -14,8 +14,6 @@ const LogIn = () => {
 
   const { isLoading, isSuccess, status, isError, data, error } = useUser();
 
-  console.log(data, status, isError, error, isLoading);
-
   const mutation = useMutation<IUser, AxiosError, { email: string; password: string }>(
     '/api/users',
     (data) => loginAPI(data),
